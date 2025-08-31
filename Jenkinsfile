@@ -1,39 +1,39 @@
-pipeline{
+pipeline {
     agent any
-    
-    environment{
-        DOCKERHUB_CREDENTIALS = credentials('dockerhub')
+
+    environment {
         IMAGE_NAME = "mjdocker3112/myapp"
-        
     }
 
-    stages{
-        stage('Checkout'){
-            steps{
-            https://github.com/mrutyunjayma/jenkins-pipeline.git
+    stages {
+        stage('Clean Workspace') {
+            steps {
+                deleteDir()
             }
         }
 
-        stage('Build Docker Image'){
-            steps{
+        stage('Build Docker Image') {
+            steps {
                 sh 'docker build -t $IMAGE_NAME:$BUILD_NUMBER .'
             }
         }
 
-        stage('Login to DockerHub'){
-            steps{
-                sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALs_USR --password-stdin'
+        stage('Login to DockerHub') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
+                }
             }
         }
 
-        stage('Push Docker Image'){
-            steps{
+        stage('Push Docker Image') {
+            steps {
                 sh 'docker push $IMAGE_NAME:$BUILD_NUMBER'
             }
         }
 
-        stage('Deploy to Kubernetes'){
-            steps{
+        stage('Deploy to Kubernetes') {
+            steps {
                 sh 'kubectl apply -f k8s/deployment.yaml'
             }
         }
