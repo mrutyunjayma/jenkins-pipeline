@@ -3,7 +3,6 @@ pipeline {
 
     environment {
         DOCKERHUB_CREDENTIALS = credentials('dockerhub')
-        PATH = "/usr/bin:${env.PATH}"
         IMAGE_NAME = "mjdocker3112/myapp"
       }
 
