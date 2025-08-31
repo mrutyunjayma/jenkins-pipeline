@@ -2,7 +2,9 @@ pipeline {
     agent any
 
     environment {
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub')
         IMAGE_NAME = "mjdocker3112/myapp"
+        PATH = "/usr/bin:$PATH" 
     }
 
     stages {
